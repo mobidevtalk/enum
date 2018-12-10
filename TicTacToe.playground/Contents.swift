@@ -15,12 +15,23 @@ class TicTacToe{
         case Two_One, Two_Two, Two_Three
         case Three_one, Three_Two, Three_Three
     }
+    
+    enum GameState {
+        case inProgress
+        case draw
+        case win(Player)
+    }
 }
 
 
 // MARK: - CaseIterable
 extension TicTacToe.Player : CaseIterable{}
 extension TicTacToe.Square : CaseIterable{}
+extension TicTacToe.GameState: CaseIterable {
+    static var allCases: [TicTacToe.GameState]{
+        return [.inProgress, .draw] + TicTacToe.Player.allCases.map({ TicTacToe.GameState.win($0) })
+    }
+}
 
 // MARK: - Test
 class EnumTests: XCTestCase{
@@ -35,6 +46,10 @@ class EnumTests: XCTestCase{
 
     func test_3X3_square() {
         XCTAssertEqual(TicTacToe.Square.allCases.count, 9, "more or less than Nine square 😕")
+    }
+    
+    func test_GameState() {
+        XCTAssertEqual(TicTacToe.GameState.allCases.count, 4, "Should only have 4 states 🎮")
     }
 }
 
