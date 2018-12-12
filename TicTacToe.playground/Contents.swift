@@ -26,10 +26,25 @@ class TicTacToe{
 
 // MARK: - CaseIterable
 extension TicTacToe.Player : CaseIterable{}
+
 extension TicTacToe.Square : CaseIterable{}
+
 extension TicTacToe.GameState: CaseIterable {
     static var allCases: [TicTacToe.GameState]{
         return [.inProgress, .draw] + TicTacToe.Player.allCases.map({ TicTacToe.GameState.win($0) })
+    }
+}
+
+extension TicTacToe.GameState: CustomStringConvertible{
+    var description: String{
+        switch self {
+        case .inProgress:
+            return "Game is running"
+        case .draw:
+            return "Game ended up in a draw"
+        case .win(let player):
+            return "\(player) won"
+        }
     }
 }
 
@@ -50,6 +65,10 @@ class EnumTests: XCTestCase{
     
     func test_GameState() {
         XCTAssertEqual(TicTacToe.GameState.allCases.count, 4, "Should only have 4 states 🎮")
+    }
+    
+    func test_GameState_StringPresentation() {
+        TicTacToe.GameState.allCases.forEach({XCTAssertFalse($0.description.isEmpty, "Description should not be Empty")})
     }
 }
 
