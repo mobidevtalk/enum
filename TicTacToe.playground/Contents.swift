@@ -93,7 +93,7 @@ enum WinningStreak{
 }
 
 func result(for sequence: [Square]) -> WinningStreak?{
-    guard sequence.count == 3 else { return nil }
+    guard sequence.count == 3, sequence[0] != sequence [1], sequence[1] != sequence[2], sequence[2] != sequence[0] else { return nil }
     
     if sequence[0].rawValue.row == sequence[1].rawValue.row && sequence[1].rawValue.row == sequence[2].rawValue.row {
         return .horizontal
@@ -164,7 +164,34 @@ class EnumTests: XCTestCase{
         allCombination.forEach({ XCTAssertTrue( result(for: $0) == .diagonal, "diagonal winning combination didn't match")})
     }
 
+    func test_sameSquareType_shouldReturnNil() {
+        let allCombination: [[Square]] = [
+            [.One_One, .One_One,.Three_One],
+            [.One_Three, .One_Three, .One_Three]
+        ]
+        
+        allCombination.forEach({ XCTAssertNil( result(for: $0), "Same square for result should return nil")})
+    }
     
+    func test_sequenceAlwaysShouldContains_ThreeElements() {
+        let allCombination: [[Square]] = [
+            [.One_One, .Three_One],
+            [.One_Three],
+            []
+        ]
+        
+        allCombination.forEach({ XCTAssertNil( result(for: $0), "Sequece should be exact 3 elements")})
+    }
+    
+    func test_InappropriateInput_shouldResultNil() {
+        let allCombination: [[Square]] = [
+            [.One_One, .One_Two, .Three_One],
+            [.Two_One, .One_One, .Two_Three],
+            [.Three_One, .Three_Two, .Two_One]
+        ]
+        
+        allCombination.forEach({ XCTAssertNil( result(for: $0), "Inappropriate input should Result nil")})
+    }
 }
 
 class TestObserver: NSObject, XCTestObservation {
