@@ -86,41 +86,29 @@ extension GameState: CustomStringConvertible{
 }
 
 // MARK: - Winning combination
-enum WinningCombination{
+enum WinningStreak{
     case horizontal
     case vertical
     case diagonal
 }
 
-extension WinningCombination: RawRepresentable{
-    typealias Sequence = Set<Set<Square>>
+func result(for sequence: [Square]) -> WinningStreak?{
+    guard sequence.count == 3 else { return nil }
     
-    var rawValue: Sequence{
-        switch self {
-        case .horizontal:
-            return [[.One_One, .One_Two, .One_Three],
-                    [.Two_One, .Two_Two, .Two_Three],
-                    [.Three_One, .Three_Two, .Three_Three]]
-        case .vertical:
-            return [[.One_One, .Two_One, .Three_One],
-                    [.One_Two, .Two_Two, .Three_Two],
-                    [.One_Three, .Two_Three, .Three_Three]]
-        case .diagonal:
-            return [[.One_One, .Two_Two, .Three_Three],
-                    [.One_Three, .Two_Two, .Three_One]]
-        }
+    if sequence[0].rawValue.row == sequence[1].rawValue.row && sequence[1].rawValue.row == sequence[2].rawValue.row {
+        return .horizontal
     }
     
-    init?(rawValue: Sequence) {
-        switch rawValue {
-        case [[.One_One, .One_Two, .One_Three]],
-             [[.Two_One, .Two_Two, .Two_Three]],
-             [[.Three_One, .Three_Two, .Three_Three]]:
-            self = .horizontal
-        default:
-            return nil
-        }
+    if sequence[0].rawValue.column == sequence[1].rawValue.column && sequence[1].rawValue.column == sequence[2].rawValue.column {
+        return .vertical
     }
+    
+    if (sequence[0].rawValue.row == sequence[0].rawValue.column && sequence[1].rawValue.row == sequence[1].rawValue.column && sequence[2].rawValue.row == sequence[2].rawValue.column) ||
+        Set(arrayLiteral: sequence) == Set(arrayLiteral:  [Square.One_Three, .Two_Two, .Three_One]){
+        return .diagonal
+    }
+    
+    return nil
 }
 
 // MARK: - Test
@@ -147,15 +135,35 @@ class EnumTests: XCTestCase{
     }
     
     // MARK: - Game Logic
-    func test_EveryHorizontalRow_shouldBe_winningCombination() {
-        let winningCombination: WinningCombination.Sequence = [
+    func test_HorizontalStreak_shouldBe_HorizontalWinningCombination() {
+        let allCombination: [[Square]] = [
             [.One_One, .One_Two, .One_Three],
             [.Two_One, .Two_Two, .Two_Three],
             [.Three_One, .Three_Two, .Three_Three]
         ]
-
-//        winningCombination.forEach({ XCTAssertEqual(WinningCombination(rawValue: $0), .horizontal) })
+        
+        allCombination.forEach({ XCTAssertTrue( result(for: $0) == .horizontal, "horizontal winning combination didn't match")})
     }
+    
+    func test_VerticalStreak_shouldBe_VerticalWinningCombination() {
+        let allCombination: [[Square]] = [
+            [.One_One, .Two_One,.Three_One],
+            [.One_Two, .Two_Two, .Three_Two],
+            [.One_Three, .Two_Three, .Three_Three]
+        ]
+        
+        allCombination.forEach({ XCTAssertTrue( result(for: $0) == .vertical, "vertical winning combination didn't match")})
+    }
+    
+    func test_DiagonalStreak_shouldBe_DiagonalWinningCombination() {
+        let allCombination: [[Square]] = [
+            [.One_One, .Two_Two,.Three_Three],
+            [.One_Three, .Two_Two, .Three_One]
+        ]
+        
+        allCombination.forEach({ XCTAssertTrue( result(for: $0) == .diagonal, "diagonal winning combination didn't match")})
+    }
+
     
 }
 
