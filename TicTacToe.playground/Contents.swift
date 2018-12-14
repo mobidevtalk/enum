@@ -85,7 +85,9 @@ extension GameState: CustomStringConvertible{
     }
 }
 
-// MARK: - Winning combination
+extension GameState: Equatable{}
+
+// MARK: - Game Logic
 enum WinningStreak{
     case horizontal
     case vertical
@@ -109,6 +111,16 @@ func result(for sequence: [Square]) -> WinningStreak?{
     }
     
     return nil
+}
+
+// MARK: - Game Play
+class TicTacToe{
+    
+    
+    func progress(_ square: Square) -> GameState {
+        
+        return .inProgress
+    }
 }
 
 // MARK: - Test
@@ -192,6 +204,16 @@ class EnumTests: XCTestCase{
         
         allCombination.forEach({ XCTAssertNil( result(for: $0), "Inappropriate input should Result nil")})
     }
+    
+    // MARK: - Game Play
+    func test_GamePlay_shouldReturn_inProgress_State_onGamePlay() {
+        XCTAssertEqual(TicTacToe().progress(.One_One), GameState.inProgress, "Default progress should be inProgress")
+    }
+    func test_gamePlay_draw() {
+        
+        
+    }
+    
 }
 
 class TestObserver: NSObject, XCTestObservation {
