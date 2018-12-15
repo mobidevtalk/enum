@@ -1,5 +1,5 @@
 //: A UIKit based Playground for presenting user interface
-  
+
 import Foundation
 import XCTest
 
@@ -45,7 +45,7 @@ extension Square: RawRepresentable{
         case (row: 1, column: 1): self = .One_One
         case (row: 1, column: 2): self = .One_Two
         case (row: 1, column: 3): self = .One_Three
-        
+            
         case (row: 2, column: 1): self = .Two_One
         case (row: 2, column: 2): self = .Two_Two
         case (row: 2, column: 3): self = .Two_Three
@@ -128,7 +128,7 @@ class TicTacToe{
     private var sequence = [Square]()
     
     func progress(_ square: Square) -> GameState? {
-        //        guard sequence.count == 9 else { return nil }
+        guard sequence.count < 9 else { return nil }
         
         sequence.append(square)
         
@@ -161,7 +161,7 @@ class EnumTests: XCTestCase{
     func test_twoPlayerGame() {
         XCTAssertEqual(Player.allCases.count, 2, "more or less than two player 😕")
     }
-
+    
     func test_3X3_square() {
         XCTAssertEqual(Square.allCases.count, 9, "more or less than Nine square 😕")
     }
@@ -204,7 +204,7 @@ class EnumTests: XCTestCase{
         
         allCombination.forEach({ XCTAssertTrue( result(for: $0) == .diagonal, "diagonal winning combination didn't match")})
     }
-
+    
     func test_sameSquareType_shouldReturnNil() {
         let allCombination: [[Square]] = [
             [.One_One, .One_One,.Three_One],
@@ -250,13 +250,13 @@ class EnumTests: XCTestCase{
                                assertMessage: "For a draw combination Game should end in a draw")
     }
     
-    private func assert_Final_GameState(for sequence: [Square], desireState: GameState, assertMessage: String){
+    private func assert_Final_GameState(for sequence: [Square], desireState: GameState?, assertMessage: String){
         let game = TicTacToe()
-        var state: GameState? = nil
+        var FinalGameState: GameState? = nil
         
-        sequence.forEach({ state =  game.progress($0) })
+        sequence.forEach({ FinalGameState =  game.progress($0) })
         
-        XCTAssertEqual(state, desireState, assertMessage)
+        XCTAssertEqual(FinalGameState, desireState, assertMessage)
     }
     
     func test_gamePlay_FirstPlayer_wins() {
@@ -277,6 +277,16 @@ class EnumTests: XCTestCase{
         ]
         assert_Final_GameState(for: sequence, desireState: .win(Player.Second, .diagonal),
                                assertMessage: "Winner should be the Second player")
+    }
+    
+    func test_moreThan_NineInput_shouldReturn_Nil_GameState() {
+        let sequence: [Square] = [
+            .One_One, .One_Two, .Three_One,
+            .Two_One, .Three_Three, .Two_Three,
+            .One_Three, .Three_Two, .Two_Two,
+            .One_One //this is the extra input
+        ]
+        assert_Final_GameState(for: sequence, desireState: nil, assertMessage: "More than 9 input should return nil")
     }
 }
 
