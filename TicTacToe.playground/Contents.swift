@@ -63,12 +63,19 @@ extension Square: RawRepresentable{
 enum GameState {
     case inProgress
     case draw
-    case win(Player)
+    case win(Player, WinningStreak)
 }
 
 extension GameState: CaseIterable {
     static var allCases: [GameState]{
-        return [.inProgress, .draw] + Player.allCases.map({ GameState.win($0) })
+        
+        var winCases = [GameState]()
+        
+        for (_, player) in Player.allCases.enumerated(){
+            winCases.append(contentsOf: WinningStreak.allCases.map({ GameState.win(player, $0) }))
+        }
+        
+        return [.inProgress, .draw] + winCases
     }
 }
 
@@ -94,6 +101,8 @@ enum WinningStreak{
     case diagonal
 }
 
+extension WinningStreak: CaseIterable{}
+
 func result(for sequence: [Square]) -> WinningStreak?{
     guard sequence.count == 3, sequence[0] != sequence [1], sequence[1] != sequence[2], sequence[2] != sequence[0] else { return nil }
     
@@ -116,10 +125,29 @@ func result(for sequence: [Square]) -> WinningStreak?{
 // MARK: - Game Play
 class TicTacToe{
     
+    private var sequence = [Square]()
     
-    func progress(_ square: Square) -> GameState {
+    func progress(_ square: Square) -> GameState? {
+        //        guard sequence.count == 9 else { return nil }
         
-        return .inProgress
+        sequence.append(square)
+        
+        guard sequence.count > 4 else { return .inProgress }
+        
+        var firstPlayeSequence = [Square]()
+        var secondPlayeSequence = [Square]()
+        
+        for (index, square) in sequence.enumerated(){
+            index % 2 == 0 ? firstPlayeSequence.append(square) : secondPlayeSequence.append(square)
+        }
+        
+        if let streak = result(for: firstPlayeSequence) {
+            return .win(Player.First, streak)
+        }else if let streak = result(for: secondPlayeSequence){
+            return .win(Player.Second, streak)
+        }else{
+            return .draw
+        }
     }
 }
 
@@ -139,7 +167,8 @@ class EnumTests: XCTestCase{
     }
     
     func test_GameState() {
-        XCTAssertEqual(GameState.allCases.count, 4, "Should only have 4 states 🎮")
+        let allGameState = 2 + 2*3 // 2:.inProgress,.drwa; 2:Player.allcases * 3:WinningStreak.allcases
+        XCTAssertEqual(GameState.allCases.count, allGameState, "Should only have 4 states 🎮")
     }
     
     func test_GameState_StringPresentation() {
@@ -209,11 +238,46 @@ class EnumTests: XCTestCase{
     func test_GamePlay_shouldReturn_inProgress_State_onGamePlay() {
         XCTAssertEqual(TicTacToe().progress(.One_One), GameState.inProgress, "Default progress should be inProgress")
     }
+    
     func test_gamePlay_draw() {
+        let sequence: [Square] = [
+            .One_One, .One_Two, .Three_One,
+            .Two_One, .Three_Three, .Two_Three,
+            .One_Three, .Three_Two, .Two_Two
+        ]
         
-        
+        assert_Final_GameState(for: sequence, desireState: .draw,
+                               assertMessage: "For a draw combination Game should end in a draw")
     }
     
+    private func assert_Final_GameState(for sequence: [Square], desireState: GameState, assertMessage: String){
+        let game = TicTacToe()
+        var state: GameState? = nil
+        
+        sequence.forEach({ state =  game.progress($0) })
+        
+        XCTAssertEqual(state, desireState, assertMessage)
+    }
+    
+    func test_gamePlay_FirstPlayer_wins() {
+        let sequence: [Square] = [
+            .One_One, .One_Two,
+            .Two_Two, .Two_One,
+            .Three_Three
+        ]
+        assert_Final_GameState(for: sequence, desireState: .win(Player.First, .diagonal),
+                               assertMessage: "Winner should be the first player")
+    }
+    
+    func test_gamePlay_SecondPlayer_wins() {
+        let sequence: [Square] = [
+            .One_Two, .One_One,
+            .Two_One, .Two_Two,
+            .Two_Three, .Three_Three
+        ]
+        assert_Final_GameState(for: sequence, desireState: .win(Player.Second, .diagonal),
+                               assertMessage: "Winner should be the Second player")
+    }
 }
 
 class TestObserver: NSObject, XCTestObservation {
