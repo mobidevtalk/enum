@@ -114,7 +114,7 @@ Suits.clubs.hashValue
  associated Values & rawValue
  */
 enum Department: String{
-    case manufactering
+    case manufacturing
     case rnd
     case marketing
 }
@@ -156,6 +156,9 @@ extension Hierarchy: RawRepresentable{
         }
     }
 }
+
+let ceo = Hierarchy(rawValue: "CEO")
+ceo?.rawValue
 
 let department = Department.rnd
 department.rawValue
