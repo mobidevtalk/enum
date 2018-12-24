@@ -135,7 +135,7 @@ extension Hierarchy: RawRepresentable{
         case .ceo:
             return "CEO"
         case .manager(let department):
-            return "\(department.rawValue.uppercased()) Manager"
+            return "\(department.rawValue.capitalized) Manager"
         }
     }
     
@@ -145,14 +145,22 @@ extension Hierarchy: RawRepresentable{
         case "CEO": self = .ceo
         default:
             let splitted = rawValue.split(separator: " ")
+            
             if let deptVal = splitted.first,
-                let department = Department(rawValue: deptVal.lowercased()),
-                splitted[1] == "Manager" {
+                let department = Department(rawValue: String(deptVal)),
+                splitted.last == "Manager" {
                 self = .manager(department)
+            }else{
+                return nil
             }
-            return nil
         }
     }
 }
 
+let department = Department.rnd
+department.rawValue
 
+let rndManager = Hierarchy(rawValue: "\(department.rawValue) Manager")
+rndManager?.rawValue
+
+Hierarchy(rawValue: "Should return nil")?.rawValue
