@@ -126,7 +126,6 @@ enum Hierarchy{
 }
 
 extension Hierarchy: RawRepresentable{
-    typealias RawValue = String
     
     var rawValue: String{
         switch self {
