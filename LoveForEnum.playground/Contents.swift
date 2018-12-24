@@ -101,5 +101,58 @@ Suits.clubs.hashValue
 
 
 /*:
- rawValue vs associated Values
+ associated Values vs rawValue
  */
+
+//enum ErrorCode : String{
+//    case https(Int) //Enum with raw type cannot have cases with arguments
+//    case generic
+//}
+
+
+/*:
+ associated Values & rawValue
+ */
+enum Department: String{
+    case manufactering
+    case rnd
+    case marketing
+}
+
+enum Hierarchy{
+    case chairman
+    case ceo
+    case manager(Department)
+}
+
+extension Hierarchy: RawRepresentable{
+    typealias RawValue = String
+    
+    var rawValue: String{
+        switch self {
+        case .chairman:
+            return "Chairman"
+        case .ceo:
+            return "CEO"
+        case .manager(let department):
+            return "\(department.rawValue.uppercased()) Manager"
+        }
+    }
+    
+    init?(rawValue: RawValue) {
+        switch rawValue {
+        case "Chairman": self = .chairman
+        case "CEO": self = .ceo
+        default:
+            let splitted = rawValue.split(separator: " ")
+            if let deptVal = splitted.first,
+                let department = Department(rawValue: deptVal.lowercased()),
+                splitted[1] == "Manager" {
+                self = .manager(department)
+            }
+            return nil
+        }
+    }
+}
+
+
