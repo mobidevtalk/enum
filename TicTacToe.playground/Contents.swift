@@ -9,8 +9,6 @@ enum Player {
     case Second
 }
 
-extension Player : CaseIterable{}
-
 // MARK: - Square
 enum Square {
     case One_One, One_Two, One_Three
@@ -18,10 +16,7 @@ enum Square {
     case Three_One, Three_Two, Three_Three
 }
 
-extension Square : CaseIterable{}
-
 extension Square: RawRepresentable{
-    
     typealias Position = (row: Int, column: Int)
     
     var rawValue: Position{
@@ -66,19 +61,6 @@ enum GameState {
     case win(Player, WinningStreak)
 }
 
-extension GameState: CaseIterable {
-    static var allCases: [GameState]{
-        
-        var winCases = [GameState]()
-        
-        for (_, player) in Player.allCases.enumerated(){
-            winCases.append(contentsOf: WinningStreak.allCases.map({ GameState.win(player, $0) }))
-        }
-        
-        return [.inProgress, .draw] + winCases
-    }
-}
-
 extension GameState: CustomStringConvertible{
     var description: String{
         switch self {
@@ -94,15 +76,14 @@ extension GameState: CustomStringConvertible{
 
 extension GameState: Equatable{}
 
-// MARK: - Game Logic
+// MARK: - Winning Line
 enum WinningStreak{
     case horizontal
     case vertical
     case diagonal
 }
 
-extension WinningStreak: CaseIterable{}
-
+// MARK: - Game Logic
 func result(for sequence: [Square]) -> WinningStreak?{
     guard sequence.count == 3, sequence[0] != sequence [1], sequence[1] != sequence[2], sequence[2] != sequence[0] else { return nil }
     
@@ -151,8 +132,31 @@ class TicTacToe{
     }
 }
 
-// MARK: - Test
+// MARK: - Test Block
+
+// MARK: - Necessary extension for TDD
+extension Player : CaseIterable{}
+
+extension Square : CaseIterable{}
+
+extension WinningStreak: CaseIterable{}
+
+extension GameState: CaseIterable {
+    static var allCases: [GameState]{
+        
+        var winCases = [GameState]()
+        
+        for (_, player) in Player.allCases.enumerated(){
+            winCases.append(contentsOf: WinningStreak.allCases.map({ GameState.win(player, $0) }))
+        }
+        
+        return [.inProgress, .draw] + winCases
+    }
+}
+
+// MARK: - Test cases
 class EnumTests: XCTestCase{
+    
     func testSetup() {
         XCTAssert(true, "Things are not ok 🤯")
     }
