@@ -1,6 +1,28 @@
 import Foundation
 
 /*:
+ Generic enum
+ */
+enum Status<T: CustomStringConvertible>{
+    case success(T)
+    case failed
+}
+
+extension Status{
+    var description: String{
+        switch self {
+        case .success(let text):
+            return text.description
+        case .failed:
+            return "Failed...."
+        }
+    }
+}
+
+Status.success("Good to go").description
+Status.success(5).description
+
+/*:
  Error definition through enum
  */
 enum Mismatched : String{
