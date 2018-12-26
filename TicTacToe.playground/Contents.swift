@@ -54,6 +54,13 @@ extension Square: RawRepresentable{
     }
 }
 
+// MARK: - Winning Line
+enum WinningStreak: String {
+    case horizontal
+    case vertical
+    case diagonal
+}
+
 // MARK: - Game State
 enum GameState {
     case inProgress
@@ -68,19 +75,10 @@ extension GameState: CustomStringConvertible{
             return "Game is running"
         case .draw:
             return "Game ended up in a draw"
-        case .win(let player):
-            return "\(player) won"
+        case let .win(player, streak):
+            return "\(player) won on \(streak) combination"
         }
     }
-}
-
-extension GameState: Equatable{}
-
-// MARK: - Winning Line
-enum WinningStreak{
-    case horizontal
-    case vertical
-    case diagonal
 }
 
 // MARK: - Game Logic
@@ -153,6 +151,8 @@ extension GameState: CaseIterable {
         return [.inProgress, .draw] + winCases
     }
 }
+
+extension GameState: Equatable{}
 
 // MARK: - Test cases
 class EnumTests: XCTestCase{
