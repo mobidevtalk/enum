@@ -1,4 +1,6 @@
-//: A UIKit based Playground for presenting user interface
+/*:
+ @http://mobidevtalk.com/
+ */
 
 import Foundation
 import XCTest
@@ -290,6 +292,10 @@ class EnumTests: XCTestCase{
         assert_Final_GameState(for: sequence, desireState: nil, assertMessage: "More than 9 input should return nil")
     }
 }
+
+/*:
+ Thanks goes to [Sundell](https://www.swiftbysundell.com/posts/writing-unit-tests-in-a-swift-playground).
+ */
 
 class TestObserver: NSObject, XCTestObservation {
     func testCase(_ testCase: XCTestCase,
