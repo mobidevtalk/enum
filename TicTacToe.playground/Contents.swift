@@ -88,16 +88,13 @@ func result(for sequence: [Square]) -> WinningStreak?{
     if sequence[0].rawValue.row == sequence[1].rawValue.row && sequence[1].rawValue.row == sequence[2].rawValue.row {
         return .horizontal
     }
-    
     if sequence[0].rawValue.column == sequence[1].rawValue.column && sequence[1].rawValue.column == sequence[2].rawValue.column {
         return .vertical
     }
-    
     if (sequence[0].rawValue.row == sequence[0].rawValue.column && sequence[1].rawValue.row == sequence[1].rawValue.column && sequence[2].rawValue.row == sequence[2].rawValue.column) ||
         Set(arrayLiteral: sequence) == Set(arrayLiteral:  [Square.One_Three, .Two_Two, .Three_One]){
         return .diagonal
     }
-    
     return nil
 }
 
@@ -113,16 +110,16 @@ class TicTacToe{
         
         guard sequence.count > 4 else { return .inProgress }
         
-        var firstPlayeSequence = [Square]()
-        var secondPlayeSequence = [Square]()
+        var firstPlayerSequence = [Square]()
+        var secondPlayerSequence = [Square]()
         
         for (index, square) in sequence.enumerated(){
-            index % 2 == 0 ? firstPlayeSequence.append(square) : secondPlayeSequence.append(square)
+            index % 2 == 0 ? firstPlayerSequence.append(square) : secondPlayerSequence.append(square)
         }
         
-        if let streak = result(for: firstPlayeSequence) {
+        if let streak = result(for: firstPlayerSequence) {
             return .win(Player.First, streak)
-        }else if let streak = result(for: secondPlayeSequence){
+        }else if let streak = result(for: secondPlayerSequence){
             return .win(Player.Second, streak)
         }else{
             return .draw
