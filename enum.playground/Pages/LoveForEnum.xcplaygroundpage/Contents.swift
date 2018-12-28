@@ -1,3 +1,8 @@
+/*:
+ Copyright © 2018 [mobidevtalk](http://mobidevtalk.com)
+ */
+//: [Index](Index)
+
 import Foundation
 
 /*:
@@ -164,4 +169,3 @@ let rndManager = Hierarchy(rawValue: "\(department.rawValue) Manager")
 rndManager?.rawValue
 
 Hierarchy(rawValue: "Should return nil")?.rawValue
-

@@ -1,4 +1,10 @@
+/*:
+ Copyright © 2018 [mobidevtalk](http://mobidevtalk.com)
+ */
+//: [Index](Index)
+
 import Foundation
+
 /*:
  Generic enum
  */
@@ -114,4 +120,3 @@ enum Direction{
 }
 extension Direction: CaseIterable{}
 Direction.allCases
-

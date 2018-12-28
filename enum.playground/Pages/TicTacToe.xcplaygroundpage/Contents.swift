@@ -1,6 +1,7 @@
 /*:
- @http://mobidevtalk.com/
+ Copyright © 2018 [mobidevtalk](http://mobidevtalk.com)
  */
+//: [Index](Index)
 
 import Foundation
 import XCTest
